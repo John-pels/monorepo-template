@@ -10,7 +10,7 @@
   },
   "linter": {
     "enabled": true,
-    "ignore": [],
+    "ignore": ["./apps/dashboard/src/routeTree.gen.ts"],
     "rules": {
       "recommended": true,
       "correctness": {

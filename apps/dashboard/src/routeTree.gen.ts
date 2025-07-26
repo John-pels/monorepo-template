@@ -28,52 +28,52 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
-} as unknown)
+} as any)
 const ExampleChatRoute = ExampleChatRouteImport.update({
   id: '/example/chat',
   path: '/example/chat',
   getParentRoute: () => rootRouteImport,
-} as unknown)
+} as any)
 const DemoStoreRoute = DemoStoreRouteImport.update({
   id: '/demo/store',
   path: '/demo/store',
   getParentRoute: () => rootRouteImport,
-} as unknown)
+} as any)
 const ExampleGuitarsIndexRoute = ExampleGuitarsIndexRouteImport.update({
   id: '/example/guitars/',
   path: '/example/guitars/',
   getParentRoute: () => rootRouteImport,
-} as unknown)
+} as any)
 const ExampleGuitarsGuitarIdRoute = ExampleGuitarsGuitarIdRouteImport.update({
   id: '/example/guitars/$guitarId',
   path: '/example/guitars/$guitarId',
   getParentRoute: () => rootRouteImport,
-} as unknown)
+} as any)
 const DemoStartServerFuncsRoute = DemoStartServerFuncsRouteImport.update({
   id: '/demo/start/server-funcs',
   path: '/demo/start/server-funcs',
   getParentRoute: () => rootRouteImport,
-} as unknown)
+} as any)
 const DemoStartApiRequestRoute = DemoStartApiRequestRouteImport.update({
   id: '/demo/start/api-request',
   path: '/demo/start/api-request',
   getParentRoute: () => rootRouteImport,
-} as unknown)
+} as any)
 const ApiSseServerRoute = ApiSseServerRouteImport.update({
   id: '/api/sse',
   path: '/api/sse',
   getParentRoute: () => rootServerRouteImport,
-} as unknown)
+} as any)
 const ApiMessagesServerRoute = ApiMessagesServerRouteImport.update({
   id: '/api/messages',
   path: '/api/messages',
   getParentRoute: () => rootServerRouteImport,
-} as unknown)
+} as any)
 const ApiDemoNamesServerRoute = ApiDemoNamesServerRouteImport.update({
   id: '/api/demo-names',
   path: '/api/demo-names',
   getParentRoute: () => rootServerRouteImport,
-} as unknown)
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
