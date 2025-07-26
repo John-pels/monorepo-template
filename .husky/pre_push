@@ -1,0 +1,10 @@
+set -eu
+
+echo "Running type check..."
+bun run check-types
+
+if [ $? -ne 0 ]; then
+  printf '%s\n' "ERROR: Type check failed. Please fix the errors before pushing" >&2
+  exit 1
+fi
+
