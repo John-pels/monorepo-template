@@ -3,13 +3,17 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev",
-    "lint": "turbo run lint",
+    "dev": "dotenv -- turbo run dev",
+    "lint": "biome check --write --unsafe",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "format-and-lint:fix": "biome check --write --unsafe",
+    "prepare": "husky",
+    "knip": "knip",
     "check-types": "turbo run check-types",
-    "prepare": "husky"
+    "check-types:watch": "turbo run check-types:watch"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.9.4",
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "dotenv-cli": "^9.0.0",
@@ -24,7 +28,5 @@
   },
   "packageManager": "bun@1.1.24",
   "workspaces": ["apps/*", "packages/*"],
-  "dependencies": {
-    "@biomejs/biome": "1.9.4"
-  }
+  "dependencies": {}
 }
