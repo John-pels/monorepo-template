@@ -1,6 +1,6 @@
 # Monorepo Template
 
-A comprehensive, production-ready monorepo template designed to accelerate development teams by providing a solid foundation for managing multiple interconnected projects within a single repository.
+This monorepo template provides a robust foundation for building scalable, multi-package JavaScript and TypeScript projects. It leverages Yarn Workspaces and Turborepo to streamline dependency management, build processes, and development workflows. Designed for front-end and back-end applications, this template supports React for UI development, Node.js for server-side logic, and shared utility packages for code reuse across projects
 
 ## 🚀 Features
 
@@ -67,7 +67,7 @@ Ensure your development environment meets these requirements:
 #inside the package.json, add this:
  "packageManager": "bun@1.2.19",
 
-# Or this for yanr
+# Or this for yarn
   "packageManager": "yarn@1.22.22",
 
 # Or this or npm
@@ -194,13 +194,21 @@ bun add -D typescript @types/node
 bun workspaces foreach add lodash
 ```
 
-### Creating New Packages
+For each application in the `apps/` folder,we add `"@repo/ui": "*",` to the dependencies in the app `package.json` file and
+
+- also add the `"@repo/eslint-config": "*",` and `"@repo/typescript-config": "*",` to the `devDependencies` in the `package.json` file. Do the same for every new package you add to the `packages/` folder.
+
+### Creating New Application and Packages
 
 ```bash
 # Create new application
-mkdir apps/admin
-cd apps/admin
-yarn init -y
+cd apps/
+
+# To create a new Next.js application, then run the below command
+npx create-next-app@latest
+
+# To create a new web application with Vite.js, run the below command and follow the prompts
+npm create vite@latest
 
 # Create new shared package
 mkdir packages/auth
@@ -208,17 +216,17 @@ cd packages/auth
 bun init -y
 ```
 
+**\*Note**: It is super important to use different port for all the applications in the `package.json` . For instance, we have two applications in the `apps/` folder.
+
+- For the `web` application, we will use port `8000`
+- For the `dashboard` application, we will use port `8001`.
+
 ### Workspace Dependencies
 
-Reference internal packages in `package.json`:
+Reference internal packages in root `package.json`:
 
 ```json
-{
-  "dependencies": {
-    "@your-org/ui": "workspace:*",
-    "@your-org/utils": "workspace:*"
-  }
-}
+ "workspaces": ["apps/*", "packages/*"],
 ```
 
 ## 🏗 Build System
