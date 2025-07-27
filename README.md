@@ -216,7 +216,9 @@ cd packages/auth
 bun init -y
 ```
 
-**\*Note**: It is super important to use different port for all the applications in the `package.json` . For instance, we have two applications in the `apps/` folder.
+**NOTE**: Just as UI is for anything user interface or components, shared providers such as Tanstack Query, Chakra UI, Zustand, HTTP clients, etc can be added inside this package and used across the applications. See this packages folder as a place where you can create local NPM packages and use them anywhere in this monorepo.
+
+**\*Also**, it is super important to use different port for all the applications in the `package.json` . For instance, we have two applications in the `apps/` folder.
 
 - For the `web` application, we will use port `8000`
 - For the `dashboard` application, we will use port `8001`.
@@ -655,6 +657,8 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 - [Turborepo](https://turbo.build/) for build orchestration
 - [Bun](https://bun.com/docs) for package management
+- [Next.js](https://nextjs.org/) for creating next.js application
+- [Vite.js](https://vite.dev/guide/) for creating vite powered application.
 - [TypeScript](https://www.typescriptlang.org/) for type safety
 - [Jest](https://jestjs.io/) for testing framework
 - [Biome](https://biomejs.dev/) for code linting and formatting
