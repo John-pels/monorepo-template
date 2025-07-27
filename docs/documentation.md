@@ -667,7 +667,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## 📞 Support
 
-- 📖 [Documentation](./docs/documentation.md)
+- 📖 [Documentation](./docs/)
 - 🐛 [Issue Tracker](https://github.com/John-pels/monorepo-template/issues)
 - 💬 [Discussions](https://github.com/John-pels/monorepo-template/discussions)
 - 📧 [Email Support](johnoluemmanuel@gmail.com)
