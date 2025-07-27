@@ -27,18 +27,16 @@ monorepo-template/
 │   ├── settings.json          # Workspace settings
 │   └── launch.json           # Debug configuration
 ├── apps/                       # Application packages
-│   ├── web/                   # Frontend web application
-│   ├── api/                   # Backend API service
+│   ├── web/          # Frontend web application with Next.js
+│   ├── dashboard/   # Admin dashboard web application with Tanstack Router powered by Vite
 │   └── mobile/                # Mobile application
 ├── packages/                   # Shared library packages
 │   ├── ui/                    # Shared UI components
-│   ├── utils/                 # Utility functions
+│   ├── utils/
+    ├── eslint-config/         # Shared ESLint configuration
+│   ├── jest-config/           # Testing configuration             # Utility functions
 │   ├── config/                # Configuration presets
 │   └── types/                 # TypeScript definitions
-├── tools/                      # Development and build tools
-│   ├── eslint-config/         # Shared ESLint configuration
-│   ├── jest-config/           # Testing configuration
-│   └── build-scripts/         # Custom build utilities
 ├── docs/                       # Documentation
 │   ├── architecture.md        # System architecture overview
 │   ├── contributing.md        # Contribution guidelines
@@ -52,7 +50,7 @@ monorepo-template/
 ├── package.json               # Root package configuration
 ├── tsconfig.json              # TypeScript configuration
 ├── turbo.json                 # Turborepo configuration
-└── yarn.lock                  # Dependency lock file
+└── bun.lockb               # Dependency lock file
 ```
 
 ## 🛠 Prerequisites
@@ -60,8 +58,21 @@ monorepo-template/
 Ensure your development environment meets these requirements:
 
 - **Node.js**: v18.0.0 or higher
-- **Package Manager**: Yarn v3+ (preferred) or npm v8+
+- **Package Manager**: Bun (preferred) or Yarn v3+ or npm v8+
 - **Git**: v2.30.0 or higher
+
+## Package Manager Setup
+
+```bash
+#inside the package.json, add this:
+ "packageManager": "bun@1.2.19",
+
+# Or this for yanr
+  "packageManager": "yarn@1.22.22",
+
+# Or this or npm
+  "packageManager": "npm@10.9.0",
+```
 
 ## 📋 Dependencies Installation
 
@@ -71,16 +82,16 @@ Install the essential development dependencies for code quality, git hooks, and 
 
 ```bash
 # Install Biome for code quality, linting and formatting
-yarn add -D -W @biomejs/biome
+bun add -D @biomejs/biome
 
 # Install Husky for git hooks
-yarn add -D -W husky
+bun add -D husky
 
 # Install lint-staged for running linters on staged files
-yarn add -D -W lint-staged
+bun add -D lint-staged
 
 # Install Commitlint for commit message validation
-yarn add -D -W @commitlint/cli @commitlint/config-conventional
+bun add -D @commitlint/cli @commitlint/config-conventional
 ```
 
 ### Setup Commands
@@ -123,7 +134,7 @@ git commit -m "Initial commit from monorepo template"
 
 ```bash
 # Install dependencies
-yarn install
+bun install
 
 # Copy environment template
 cp .env.example .env
@@ -136,29 +147,35 @@ nvm use
 
 ```bash
 # Start all applications in development mode
-yarn dev
+bun dev
+
+# Start a specific application in development mode
+bun dev --filter=app-name # For instance, bun dev --filter=web
 
 # Run specific application
-yarn workspace @your-org/web dev
-yarn workspace @your-org/api dev
+bun workspace @your-org/web dev
+bun workspace @your-org/api dev
 
 # Build all packages
-yarn build
+bun run build
 
 # Run tests across all packages
-yarn test
+bun run test
 
 # Lint codebase
-yarn lint
+bun run lint
 
 # Fix linting and formatting issues
-yarn lint:fix
+bun format-and-lint:fix
 
 # Format code
-yarn format
+bun run format
 
-# Check formatting without writing
-yarn format:check
+# Check for typescript error without writing
+bun run check-types
+
+# watchout for typescript error without writing
+bun run check-types:watch
 ```
 
 ## 📦 Package Management
@@ -167,14 +184,14 @@ yarn format:check
 
 ```bash
 # Add dependency to specific workspace
-yarn workspace @your-org/web add react react-dom
-yarn workspace @your-org/api add express
+bun workspace @your-org/web add react react-dom
+bun workspace @your-org/api add express
 
 # Add dev dependency to root
-yarn add -D -W typescript @types/node
+bun add -D typescript @types/node
 
 # Add dependency to multiple workspaces
-yarn workspaces foreach add lodash
+bun workspaces foreach add lodash
 ```
 
 ### Creating New Packages
@@ -188,7 +205,7 @@ yarn init -y
 # Create new shared package
 mkdir packages/auth
 cd packages/auth
-yarn init -y
+bun init -y
 ```
 
 ### Workspace Dependencies
@@ -232,16 +249,19 @@ The monorepo uses Turborepo for efficient build orchestration:
 
 ```bash
 # Build with caching
-yarn build
+bun run build
+
+# Build a soecific app with caching
+bun run build --filter=app-name # For instance, bun run build --filter=web
 
 # Build specific package and its dependencies
-yarn workspace @your-org/web build
+bun workspace @your-org/web build
 
 # Clear build cache
-yarn build --force
+bun build --force
 
 # Build with verbose output
-yarn build --verbose
+bun build --verbose
 ```
 
 ## 🧪 Testing Strategy
@@ -256,16 +276,16 @@ yarn build --verbose
 
 ```bash
 # Run all tests
-yarn test
+bun test
 
 # Run tests in watch mode
-yarn test --watch
+bun test --watch
 
 # Run tests with coverage
-yarn test --coverage
+bun test --coverage
 
 # Run tests for specific package
-yarn workspace @your-org/utils test
+bun workspace @your-org/utils test
 ```
 
 ### Test Configuration
@@ -297,73 +317,62 @@ Create a `biome.json` configuration file:
 
 ```json
 {
-  "$schema": "https://biomejs.dev/schemas/1.4.1/schema.json",
+  "$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
   "organizeImports": {
     "enabled": true
   },
   "linter": {
     "enabled": true,
+    "ignore": ["./apps/dashboard/src/routeTree.gen.ts"],
     "rules": {
       "recommended": true,
-      "complexity": {
-        "noExtraBooleanCast": "error",
-        "noMultipleSpacesInRegularExpressionLiterals": "error",
-        "noUselessCatch": "error",
-        "noUselessTypeConstraint": "error"
-      },
       "correctness": {
-        "noConstAssign": "error",
-        "noConstantCondition": "error",
-        "noEmptyCharacterClassInRegex": "error",
-        "noEmptyPattern": "error",
-        "noGlobalObjectCalls": "error",
-        "noInvalidConstructorSuper": "error",
-        "noInvalidNewBuiltin": "error",
-        "noNonoctalDecimalEscape": "error",
-        "noPrecisionLoss": "error",
-        "noSelfAssign": "error",
-        "noSetterReturn": "error",
-        "noSwitchDeclarations": "error",
-        "noUndeclaredVariables": "error",
-        "noUnreachable": "error",
-        "noUnreachableSuper": "error",
-        "noUnsafeFinally": "error",
-        "noUnsafeOptionalChaining": "error",
-        "noUnusedLabels": "error",
         "noUnusedVariables": "error",
-        "useIsNan": "error",
-        "useValidForDirection": "error",
-        "useYield": "error"
+        "noUnusedImports": "error"
+      },
+      "security": {
+        "noDangerouslySetInnerHtml": "off"
+      },
+      "suspicious": {
+        "noConsoleLog": "warn"
+      },
+      "a11y": {
+        "noSvgWithoutTitle": "off"
       }
     }
   },
   "formatter": {
     "enabled": true,
-    "formatWithErrors": false,
+    "lineWidth": 80,
     "indentStyle": "space",
     "indentWidth": 2,
-    "lineWidth": 80,
-    "ignore": ["**/node_modules/**", "**/dist/**", "**/.next/**"]
+    "lineEnding": "lf",
+    "formatWithErrors": false
   },
   "javascript": {
     "formatter": {
-      "jsxQuoteStyle": "double",
-      "quoteProperties": "asNeeded",
-      "semicolons": "always",
+      "semicolons": "asNeeded",
+      "trailingCommas": "es5",
+      "quoteStyle": "single",
       "arrowParentheses": "always",
       "bracketSameLine": false,
       "bracketSpacing": true,
-      "quoteStyle": "single"
+      "jsxQuoteStyle": "double",
+      "quoteProperties": "asNeeded"
     }
   },
-  "files": {
-    "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx", "**/*.json"],
-    "ignore": [
-      "**/node_modules/**",
-      "**/dist/**",
-      "**/.next/**",
-      "**/coverage/**"
-    ]
+  "json": {
+    "formatter": {
+      "trailingCommas": "none"
+    },
+    "parser": {
+      "allowComments": true
+    }
   }
 }
 ```
@@ -372,22 +381,22 @@ Create a `biome.json` configuration file:
 
 ```bash
 # Check code with Biome (linting + formatting)
-yarn biome check .
+bun biome check .
 
 # Fix linting and formatting issues
-yarn biome check --apply .
+bun biome check --apply .
 
 # Format code only
-yarn biome format --write .
+bun biome format --write .
 
 # Lint code only
-yarn biome lint .
+bun biome lint .
 
 # Fix linting issues only
-yarn biome lint --apply .
+bun biome lint --apply .
 
 # Organize imports
-yarn biome check --apply-unsafe .
+bun biome check --apply-unsafe .
 ```
 
 ### Git Hooks Configuration
@@ -398,6 +407,21 @@ Create a `commitlint.config.js` file:
 module.exports = {
   extends: ["@commitlint/config-conventional"],
   rules: {
+    "body-leading-blank": [1, "always"],
+    "body-max-line-length": [2, "always", 100],
+    "footer-leading-blank": [1, "always"],
+    "footer-max-line-length": [2, "always", 100],
+    "header-max-length": [2, "always", 100],
+    "scope-case": [2, "always", "lower-case"],
+    "subject-case": [
+      2,
+      "never",
+      ["sentence-case", "start-case", "pascal-case", "upper-case"],
+    ],
+    "subject-empty": [2, "never"],
+    "subject-full-stop": [2, "never", "."],
+    "type-case": [2, "always", "lower-case"],
+    "type-empty": [2, "never"],
     "type-enum": [
       2,
       "always",
@@ -413,23 +437,11 @@ module.exports = {
         "revert",
         "style",
         "test",
+        "translation",
+        "security",
+        "changeset",
       ],
     ],
-    "type-case": [2, "always", "lower-case"],
-    "type-empty": [2, "never"],
-    "scope-case": [2, "always", "lower-case"],
-    "subject-case": [
-      2,
-      "never",
-      ["sentence-case", "start-case", "pascal-case", "upper-case"],
-    ],
-    "subject-empty": [2, "never"],
-    "subject-full-stop": [2, "never", "."],
-    "header-max-length": [2, "always", 100],
-    "body-leading-blank": [1, "always"],
-    "body-max-line-length": [2, "always", 100],
-    "footer-leading-blank": [1, "always"],
-    "footer-max-line-length": [2, "always", 100],
   },
 };
 ```
@@ -441,16 +453,15 @@ Add these scripts to your root `package.json`:
 ```json
 {
   "scripts": {
-    "biome:check": "biome check .",
-    "biome:fix": "biome check --apply .",
-    "biome:format": "biome format --write .",
-    "biome:lint": "biome lint .",
-    "biome:lint-fix": "biome lint --apply .",
-    "lint": "yarn biome:check",
-    "lint:fix": "yarn biome:fix",
-    "format": "yarn biome:format",
-    "format:check": "biome format .",
-    "prepare": "husky install"
+    "build": "turbo run build",
+    "dev": "dotenv -- turbo run dev",
+    "lint": "biome check --write --unsafe",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "format-and-lint:fix": "biome check --write --unsafe",
+    "prepare": "husky",
+    "knip": "knip",
+    "check-types": "turbo run check-types",
+    "check-types:watch": "turbo run check-types:watch"
   }
 }
 ```
@@ -467,23 +478,6 @@ Configure lint-staged in your `package.json`:
   }
 }
 ```
-
-````
-
-## 🚀 Deployment
-
-### Production Build
-
-```bash
-# Create production build
-yarn build:prod
-
-# Preview production build
-yarn preview
-
-# Analyze bundle size
-yarn analyze
-````
 
 ### Environment Variables
 
@@ -538,7 +532,7 @@ jobs:
 2. Create a feature branch: `git checkout -b feature/amazing-feature`
 3. Make your changes following the coding standards
 4. Add tests for new functionality
-5. Run the full test suite: `yarn test`
+5. Run the full test suite: `bun test`
 6. Commit using conventional commits: `git commit -m "feat: add amazing feature"`
 7. Push to your branch: `git push origin feature/amazing-feature`
 8. Open a Pull Request
@@ -590,15 +584,11 @@ git commit -m "style: format code with biome"
 
 ### Security Practices
 
-- Regular dependency audits with `yarn audit`
+- Regular dependency audits with `bun audit`
 - Automated vulnerability scanning in CI/CD
 - Environment variable validation
 - Input sanitization and validation
 - HTTPS enforcement in production
-
-### Reporting Security Issues
-
-Please report security vulnerabilities by emailing [security@yourdomain.com](mailto:security@yourdomain.com) rather than using the public issue tracker.
 
 ## 📊 Performance
 
@@ -618,29 +608,35 @@ Please report security vulnerabilities by emailing [security@yourdomain.com](mai
 
 ```bash
 # Clear cache and reinstall
-yarn cache clean
+bun cache clean
 rm -rf node_modules yarn.lock
-yarn install
+bun install
+```
+
+**Find and Fix Unused Dependencies, Exports, and File**
+
+```bash
+bun run knip
 ```
 
 **Build Failures**
 
 ```bash
 # Check TypeScript errors
-yarn type-check
+bun run check-types
 
 # Clear build cache
-yarn build --force
+bun run build --force
 ```
 
 **Test Issues**
 
 ```bash
 # Clear Jest cache
-yarn test --clearCache
+bun test --clearCache
 
 # Run tests in debug mode
-yarn test --verbose
+bun test --verbose
 ```
 
 ## 📄 License
@@ -650,7 +646,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ## 🙏 Acknowledgments
 
 - [Turborepo](https://turbo.build/) for build orchestration
-- [Yarn Workspaces](https://yarnpkg.com/features/workspaces) for package management
+- [Bun](https://bun.com/docs) for package management
 - [TypeScript](https://www.typescriptlang.org/) for type safety
 - [Jest](https://jestjs.io/) for testing framework
 - [Biome](https://biomejs.dev/) for code linting and formatting
@@ -662,8 +658,6 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 - 📖 [Documentation](./docs/)
 - 🐛 [Issue Tracker](https://github.com/John-pels/monorepo-template/issues)
 - 💬 [Discussions](https://github.com/John-pels/monorepo-template/discussions)
-- 📧 [Email Support](mailto:support@yourdomain.com)
+- 📧 [Email Support](johnoluemmanuel@gmail.com)
 
 ---
-
-**Happy coding! 🎉**
